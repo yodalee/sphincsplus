@@ -42,6 +42,30 @@ endforeach()
 endforeach()
 endforeach()
 
-# build PQCgenKAT_sign with the selected TARGET
-add_executable(PQCgenKAT_sign PQCgenKAT_sign.c)
-target_link_libraries(PQCgenKAT_sign PRIVATE rng ${TARGET})
+foreach(level IN LISTS l_securitylevel)
+foreach(hash IN LISTS l_hash)
+foreach(variant IN LISTS l_variant)
+foreach(robustness IN LISTS l_robustness)
+  set(SUFFIX "${hash}-${level}${variant}-${robustness}")
+  set(LIBNAME "sphincs-${hash}-${level}${variant}-${robustness}")
+
+  # build PQCgenKAT_sign
+  add_executable(PQCgenKAT_sign-${SUFFIX} PQCgenKAT_sign.c)
+  target_link_libraries(PQCgenKAT_sign-${SUFFIX} PRIVATE rng ${LIBNAME})
+
+  # build test/benchmark
+  add_executable(benchmark-${SUFFIX} test/benchmark.c test/cycles.c)
+  target_link_libraries(benchmark-${SUFFIX} PRIVATE randombytes ${LIBNAME})
+
+  # build test/fors
+  add_executable(test_fors-${SUFFIX} test/fors.c)
+  target_link_libraries(test_fors-${SUFFIX} PRIVATE randombytes ${LIBNAME})
+
+  # build test/spx
+  add_executable(test_spx-${SUFFIX} test/spx.c)
+  target_link_libraries(test_spx-${SUFFIX} PRIVATE randombytes ${LIBNAME})
+
+endforeach()
+endforeach()
+endforeach()
+endforeach()
