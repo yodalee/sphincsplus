@@ -71,4 +71,5 @@ endif()
 message(STATUS "Selected TARGET: ${TARGET}")
 
 add_subdirectory(ref)
+add_subdirectory(haraka-aesni)
 add_subdirectory(sha2-avx2)
